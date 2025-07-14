@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FCP & LCP Measurement</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3rem;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-top: 2rem;
+    }
+    .metrics {
+      margin-top: 2rem;
+      font-size: 1.5rem;
+      color: #333;
+    }
+    .metric {
+      margin: 0.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+  <img src="https://via.placeholder.com/800x400" alt="Large Content" />
+
+  <div class="metrics">
+    <div class="metric" id="fcp">FCP: ...</div>
+    <div class="metric" id="lcp">LCP: ...</div>
+  </div>
+
+  <script>
+    const fcpEl = document.getElementById('fcp');
+    const lcpEl = document.getElementById('lcp');
+
+    const po = new PerformanceObserver((list) => {
+      list.getEntries().forEach((entry) => {
+        if (entry.name === 'first-contentful-paint') {
+          const fcp = entry.startTime.toFixed(2);
+          console.log('FCP:', fcp, 'ms');
+          fcpEl.textContent = `FCP: ${fcp} ms`;
+        } else if (entry.entryType === 'largest-contentful-paint') {
+          const lcp = entry.startTime.toFixed(2);
+          console.log('LCP:', lcp, 'ms');
+          lcpEl.textContent = `LCP: ${lcp} ms`;
+        }
+      });
+    });
+
+    po.observe({ type: 'paint', buffered: true });
+    po.observe({ type: 'largest-contentful-paint', buffered: true });
+
+    window.addEventListener('beforeunload', () => {
+      po.disconnect();
+    });
+  </script>
+</body>
+</html>
